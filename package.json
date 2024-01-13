@@ -1,0 +1,29 @@
+{
+  "name": "e-commerce-fastify",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "start": "node ./dist/index.js",
+    "dev": "nodemon src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fastify/mysql": "^4.2.0",
+    "dotenv": "^16.3.1",
+    "fastify": "^4.25.2",
+    "mysql2": "^3.7.0",
+    "reflect-metadata": "^0.2.1",
+    "typeorm": "^0.3.19",
+    "typescript": "^5.3.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "nodemon": "^3.0.2",
+    "ts-node": "^10.9.2"
+  }
+}
