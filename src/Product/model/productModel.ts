@@ -1,22 +1,24 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Category } from "../../Category/model/categoryModel";
 
 @Entity()
 export class Product {
-  @PrimaryGeneratedColumn()
-  id!: number;
+  @PrimaryGeneratedColumn("uuid")
+  id!: string;
 
   @Column()
   name!: string;
 
   @Column()
-  picture!: string;
+  picture!: File;
 
-  @Column()
+  @ManyToOne((type) => Category)
+  @JoinColumn([{ name: "categoryId", referencedColumnName: "id" }])
   categoryId!: number;
 
-  @Column()
+  @CreateDateColumn()
   createdAt!: Date;
 
-  @Column()
+  @UpdateDateColumn()
   updatedAt!: Date;
 }
