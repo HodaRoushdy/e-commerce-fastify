@@ -10,7 +10,7 @@ export class Product {
   name!: string;
 
   @Column()
-  picture!: File;
+  picture!: string;
 
   @ManyToOne((type) => Category)
   @JoinColumn([{ name: "categoryId", referencedColumnName: "id" }])

@@ -1,7 +1,8 @@
+import { IProductId } from './../../interfaces';
 import { AppDataSource } from "../../connectionDB/connection";
-// import { IproductData } from "../../interfaces";
+import { IproductData } from "../../interfaces";
 import { Product } from "../model/productModel";
-import { getProductsService } from "../services/productService";
+import { addProductService, deleteProductService, getProductsService } from "../services/productService";
 import { FastifyRequest, FastifyReply } from "fastify";
 const productRepository = AppDataSource.getRepository(Product);
 
@@ -14,13 +15,13 @@ export const addProductControl = async (
   request: FastifyRequest,
   reply: FastifyReply
 ) => {
-    const { name, picture, categoryId }= request.body;
+    const { name, picture, categoryId }= request.body as IproductData;
     if (name && picture && categoryId) {
-      const productData = new Product();
-      productData.name = name;
-      productData.picture = picture;
-      productData.categoryId = categoryId;
-        await productRepository.save(productData);
+        const productData = new Product();
+        productData.name = name;
+        productData.picture = picture;
+        productData.categoryId = categoryId;
+        await addProductService(productData)
         
       reply.send({ productData });
     } else if (!name) {
@@ -33,11 +34,9 @@ export const addProductControl = async (
 };
 
 export const deleteProductControl = async (request:FastifyRequest,reply : FastifyReply) => {
-    const { id } = request.params;
+    const { id } = request.params as IProductId;
     if (id) {
-        const product = new Product();
-        await productRepository.findOneBy(id);
-        await productRepository.remove(product);
+        await deleteProductService({id})
         reply.send("deleted successfully")
     }
     else {
@@ -45,6 +44,14 @@ export const deleteProductControl = async (request:FastifyRequest,reply : Fastif
     }
 }
 
-export const updateProductControl = () => {
-    
-}
+export const updateProductControl = async (request: FastifyRequest, reply: FastifyReply) => {
+    const { id } = request.params as IProductId;
+    const { name, picture, categoryId } = request.body as IproductData;
+    if (id && name && picture && categoryId) {
+        const product = new Product();
+        product.name = name;
+        product.picture = picture;
+        product.categoryId = categoryId;
+        await productRepository.save(product)
+    }
+};

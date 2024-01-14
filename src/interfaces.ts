@@ -1,6 +1,9 @@
 
 export interface IproductData {
   name: string;
-  picture: File;
+  picture: string;
   categoryId:number
+}
+export interface IProductId{
+  id:string
 }
