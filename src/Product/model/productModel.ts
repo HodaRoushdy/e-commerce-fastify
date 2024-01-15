@@ -1,7 +1,7 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Category } from "../../Category/model/categoryModel";
 
-@Entity()
+@Entity("products")
 export class Product {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
@@ -9,8 +9,8 @@ export class Product {
   @Column()
   name!: string;
 
-  @Column()
-  picture!: string;
+  @Column("mediumblob")
+  picture!: Buffer;
 
   @ManyToOne((type) => Category)
   @JoinColumn([{ name: "categoryId", referencedColumnName: "id" }])

@@ -1,9 +1,11 @@
-
 export interface IproductData {
   name: string;
-  picture: string;
-  categoryId:number
+  categoryId: number;
 }
-export interface IProductId{
-  id:string
+export interface IForId {
+  id: string;
+}
+export interface ICategoryData {
+  name: string;
+  parentId: number;
 }

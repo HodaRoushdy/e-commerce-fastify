@@ -5,19 +5,19 @@ import { addProductControl, deleteProductControl, getProductsControl, updateProd
 
 const app = fastify({ logger: true });
 app.register(fastifyMulter.contentParser)
+  const storage = fastifyMulter.memoryStorage()
+  const upload = fastifyMulter({ storage });
 
-  const upload = fastifyMulter({ dest: "pictures/" });
-
-export async function productRoutes(fastify: FastifyInstance) {
-  fastify.get("/", getProductsControl);
+export const productRoutes= async (fastify: FastifyInstance)=> {
+  fastify.get("/products", getProductsControl);
   fastify.route({
-   method: "POST",
-   url: "/addProduct",
-   preHandler: upload.single("picture"),
-   handler: addProductControl
+    method: "POST",
+    url: "/products/addProduct",
+    preHandler: upload.single("picture"),
+    handler: addProductControl,
   });
-  fastify.delete("/:id", deleteProductControl);
-  fastify.put("/:id",updateProductControl)
+  fastify.delete("/products/:id", deleteProductControl);
+  fastify.put("/products/:id", updateProductControl);
 }
 
 

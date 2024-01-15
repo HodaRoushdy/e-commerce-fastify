@@ -4,9 +4,10 @@ import "reflect-metadata";
 import { productRoutes } from "./Product/routes/productRoutes";
 import { AppDataSource } from "./connectionDB/connection";
 import fastifyMulter from "fastify-multer";
+import { categoryRoutes } from "./Category/routes/categoryRoutes";
 const app = fastify({ logger: true });
 const port = Number(process.env.PORT);
-const upload = fastifyMulter({ dest: "pictures/" });
+
 
 app.addContentTypeParser(
   "application/json",
@@ -16,9 +17,10 @@ app.addContentTypeParser(
     console.log(json);
   }
 );
+
 app.register(fastifyMulter.contentParser)
 app.register(productRoutes);
-
+app.register(categoryRoutes);
 
 AppDataSource.initialize()
   .then(() => {

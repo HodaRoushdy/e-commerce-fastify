@@ -1,22 +1,23 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, PrimaryColumn, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from "typeorm";
 
-@Entity()
+@Entity("categories")
+@Unique(["name"])
 export class Category {
-  @PrimaryGeneratedColumn()
-  id!: number;
+  @PrimaryGeneratedColumn("uuid")
+  id!: string;
 
-  @Column()
+  @Column({ name: "name" })
   name!: string;
 
-  @Column()
-  picture!: string;
+  @Column("mediumblob")
+  picture!: Buffer;
 
   @Column()
   parentId!: number;
 
-  @Column()
+  @CreateDateColumn()
   createdAt!: Date;
 
-  @Column()
+  @UpdateDateColumn()
   updatedAt!: Date;
 }
