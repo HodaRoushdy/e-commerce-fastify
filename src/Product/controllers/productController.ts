@@ -3,11 +3,11 @@ import sharp from "sharp";
 import { Product } from "./../../Product/model/productModel";
 
 import {
-  getProductService,
   addProductService,
   deleteProductService,
-  updateProductService,
+  getProductService,
   getSpecificProductService,
+  updateProductService,
 } from "../services/productService";
 
 export const getProductsControl = async (
@@ -52,7 +52,7 @@ export const addProductControl = async (
       .toBuffer();
     return resizedImg;
   };
-  resized()
+  resized();
   const product = new Product();
   if (!name) {
     reply.send("please enter product name");
@@ -61,10 +61,9 @@ export const addProductControl = async (
   } else {
     product.name = name;
     product.categoryId = categoryId;
-    // product.picture = pic;
     product.picture = await resized();
-    await addProductService(product);
-    reply.send({ "new product added successfully ": product });
+    const newProduct = await addProductService(product);
+    reply.send({ "new product added successfully ": newProduct });
   }
 };
 
@@ -75,21 +74,15 @@ export const updateProductControl = async (
   const { id } = request.params as any;
   const { name, categoryId } = request.body as any;
   const file = (request as any).file;
-  if (!name) {
-    reply.send("please enter the category name");
-  } else if (!categoryId) {
-    reply.send("please enter the category parent id");
+  const specificProduct = await getSpecificProductService({ id });
+  if (!specificProduct) {
+    reply.send("invalid id");
   } else {
-    const specificProduct = await getSpecificProductService({ id });
-    if (!specificProduct) {
-      reply.send("invalid id");
-    } else {
-      specificProduct.name = name;
-      specificProduct.categoryId = categoryId;
-      specificProduct.picture = file.buffer;
-      await updateProductService(specificProduct);
-      reply.send({ "product updated successfully": specificProduct });
-    }
+    if (name) specificProduct.name = name;
+    if (categoryId) specificProduct.categoryId = categoryId;
+    if (file) specificProduct.picture = file.buffer;
+    await updateProductService(specificProduct);
+    reply.send({ "product updated successfully": specificProduct });
   }
 };
 
@@ -105,4 +98,3 @@ export const getSpecificProduct = async (
     reply.send({ product });
   }
 };
-

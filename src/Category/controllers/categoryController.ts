@@ -59,10 +59,9 @@ export const addCatControl = async (
   } else {
     category.name = name;
     category.parentId = parentId;
-    // category.picture = pic;
     category.picture = await resized();
-    await addCatService(category);
-    reply.send({ "new category added successfully ": category });
+    const newCat = await addCatService(category);
+    reply.send({ "new category added successfully ": newCat });
   }
 };
 
@@ -73,21 +72,16 @@ export const updateCatControl = async (
   const { id } = request.params as any;
   const { name, parentId } = request.body as any;
   const file = (request as any).file;
-  if (!name) {
-    reply.send("please enter the category name");
-  } else if (!parentId) {
-    reply.send("please enter the category parent id");
+
+  const specificCat = await getSpecificCatService({ id });
+  if (!specificCat) {
+    reply.send("invalid id ");
   } else {
-    const specificCat = await getSpecificCatService({ id });
-    if (!specificCat) {
-      reply.send("invalid id ");
-    } else {
-      specificCat.name = name;
-      specificCat.parentId = parentId;
-      specificCat.picture = file.buffer;
-      await updateCatService(specificCat);
-      reply.send({ "category updated successfully": specificCat });
-    }
+    if (name) specificCat.name = name;
+    if (parentId) specificCat.parentId = parentId;
+    if (file) specificCat.picture = file.buffer;
+    await updateCatService(specificCat);
+    reply.send({ "category updated successfully": specificCat });
   }
 };
 
@@ -111,7 +105,16 @@ export const getCatTreeById = async (
   const { id } = (request as any).params;
   const category = await categoryRepository.find({
     where: [{ id: id }],
-    relations: { parentCategory: true, subCategories: { subCategories: {subCategories:{subCategories:{subCategories:{subCategories:true}}}} } },
+    relations: {
+      parentCategory: true,
+      subCategories: {
+        subCategories: {
+          subCategories: {
+            subCategories: { subCategories: { subCategories: true } },
+          },
+        },
+      },
+    },
   });
   reply.send({ category });
 };

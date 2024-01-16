@@ -21,7 +21,12 @@ export const categoryRoutes = async (fastify: FastifyInstance) => {
   fastify.get("/categories", getCatControl);
   fastify.get("/categoriesTree/:id", getCatTreeById);
   fastify.get("/categories/:id", getSpecificCat);
-  fastify.put("/categories/:id", updateCatControl);
+  fastify.route({
+    method: "PUT",
+    url: "/categories/:id",
+    preHandler: upload.single("picture"),
+    handler: updateCatControl,
+  });
     fastify.delete("/categories/:id", deleteCatControl);
   fastify.route({
     method: "POST",
