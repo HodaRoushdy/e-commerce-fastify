@@ -1,14 +1,14 @@
 import "dotenv/config";
-import fastify, { FastifyReply, FastifyRequest } from "fastify";
+import fastify from "fastify";
+import fastifyMulter from "fastify-multer";
 import "reflect-metadata";
+import { categoryRoutes } from "./Category/routes/categoryRoutes";
 import { productRoutes } from "./Product/routes/productRoutes";
 import { AppDataSource } from "./connectionDB/connection";
-import fastifyMulter from "fastify-multer";
-import { categoryRoutes } from "./Category/routes/categoryRoutes";
+import "./declaration";
 const app = fastify({ logger: true });
 const port = Number(process.env.PORT);
-
-
+import cors from 'fastify-cors'
 app.addContentTypeParser(
   "application/json",
   { parseAs: "string" },
@@ -18,10 +18,13 @@ app.addContentTypeParser(
   }
 );
 
-app.register(fastifyMulter.contentParser)
-app.register(productRoutes);
-app.register(categoryRoutes);
-
+app.register(fastifyMulter.contentParser);
+// app.register(productRoutes);
+// app.register(categoryRoutes);
+app.register(cors, {
+  productRoutes,
+  categoryRoutes,
+});
 AppDataSource.initialize()
   .then(() => {
     app.listen({ port }, () => {

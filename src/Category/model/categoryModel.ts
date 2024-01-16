@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from "typeorm";
+import { Product } from "../../Product/model/productModel";
 import { Timestamp } from "../../common/timestamp";
 
 @Entity("categories")
@@ -30,4 +31,7 @@ export class Category extends Timestamp {
   @ManyToOne(() => Category, (category) => category.subCategories)
   @JoinColumn({ name: "parent_id", referencedColumnName: "id" })
   parentCategory!: Category;
+
+  @OneToMany(() => Product, (product) => product.category)
+  products!: Product[];
 }

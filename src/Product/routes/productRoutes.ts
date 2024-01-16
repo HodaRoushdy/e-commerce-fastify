@@ -26,6 +26,7 @@ export const productRoutes = async (fastify: FastifyInstance) => {
     handler: updateProductControl,
   });
   fastify.delete("/products/:id", deleteProductControl);
+
   fastify.route({
     method: "POST",
     url: "/products/addProduct",

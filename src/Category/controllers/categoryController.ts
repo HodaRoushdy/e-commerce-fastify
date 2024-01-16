@@ -98,6 +98,10 @@ export const getSpecificCat = async (
   }
 };
 
+  export const getCategoriesWithCount = () => {
+    const categoryProducts = 0;
+  };
+
 export const getCatTreeById = async (
   request: FastifyRequest,
   reply: FastifyReply
@@ -107,6 +111,7 @@ export const getCatTreeById = async (
     where: [{ id: id }],
     relations: {
       parentCategory: true,
+      products: true,
       subCategories: {
         subCategories: {
           subCategories: {
@@ -116,5 +121,25 @@ export const getCatTreeById = async (
       },
     },
   });
-  reply.send({ category });
+
+  // const catego = await categoryRepository
+  //   .createQueryBuilder("category")
+  //   // .select("category.id", "id")
+  //   // .addSelect("category.name", "name")
+  //   .leftJoinAndSelect("category.products", "categoProducts1")
+  //   .leftJoinAndSelect("categoProducts1.category", "categoProducts1Catego")
+  //   .leftJoinAndSelect("categoProducts1Catego.products", "categoProducts2")
+  //   .where("category.id = :id", { id: id })
+  //   .orWhere("category.parentId = :id", { id: id })
+  //   // .orWhere("category.parentId = :id", { id: id })
+
+  //   .getMany();
+
+//   const catego = await categoryRepository.query(`
+// select distinct c.id,c.name,count(p.id) as productCount from categories as c
+// left join products as p on p.category_id = c.id
+// group by c.id,p.id
+//   `);
+  //   reply.send({ catego });
+  reply.send(category)
 };

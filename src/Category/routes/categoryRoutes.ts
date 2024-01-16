@@ -5,6 +5,7 @@ import {
   deleteCatControl,
   getCatControl,
   getCatTreeById,
+  getCategoriesWithCount,
   getSpecificCat,
   updateCatControl,
 } from "../controllers/categoryController";
@@ -17,10 +18,12 @@ const upload = fastifyMulter({
   storage,
 });
 
+
 export const categoryRoutes = async (fastify: FastifyInstance) => {
   fastify.get("/categories", getCatControl);
   fastify.get("/categoriesTree/:id", getCatTreeById);
   fastify.get("/categories/:id", getSpecificCat);
+  fastify.get("/categories/categoriesList", getCategoriesWithCount);
   fastify.route({
     method: "PUT",
     url: "/categories/:id",
