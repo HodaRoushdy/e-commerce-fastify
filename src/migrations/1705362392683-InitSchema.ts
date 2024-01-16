@@ -8,7 +8,7 @@ export class InitSchema1705362392683 implements MigrationInterface {
                 id BIGINT NOT NULL AUTO_INCREMENT,
                 name varchar(255) UNIQUE NOT NULL,
                 picture MEDIUMBLOB NOT NULL,
-                parent_id BIGINT NOT NULL,
+                parent_id BIGINT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 PRIMARY KEY(id)
@@ -31,8 +31,10 @@ export class InitSchema1705362392683 implements MigrationInterface {
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
-        
         DROP TABLE products;
+      `);
+
+      await queryRunner.query(`
         DROP TABLE categories;
       `);
   }

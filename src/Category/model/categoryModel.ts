@@ -1,9 +1,18 @@
-import { Column, CreateDateColumn, Entity, PrimaryColumn, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  Unique,
+} from "typeorm";
+import { Timestamp } from "../../common/timestamp";
 
 @Entity("categories")
 @Unique(["name"])
-export class Category {
-  @PrimaryGeneratedColumn({type:"bigint"})
+export class Category extends Timestamp {
+  @PrimaryGeneratedColumn({ type: "bigint" })
   id!: string;
 
   @Column({ name: "name" })
@@ -12,12 +21,13 @@ export class Category {
   @Column("mediumblob")
   picture!: Buffer;
 
-  @Column({type:"bigint"})
+  @Column({ type: "bigint", name: "parent_id" })
   parentId!: string;
 
-  @CreateDateColumn()
-  createdAt!: Date;
+  @OneToMany(() => Category, (category) => category.parentCategory)
+  subCategories!: Category[];
 
-  @UpdateDateColumn()
-  updatedAt!: Date;
+  @ManyToOne(() => Category, (category) => category.subCategories)
+  @JoinColumn({ name: "parent_id", referencedColumnName: "id" })
+  parentCategory!: Category;
 }

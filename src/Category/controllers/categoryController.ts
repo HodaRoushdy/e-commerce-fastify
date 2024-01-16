@@ -1,5 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import sharp from "sharp";
+import { AppDataSource } from "../../connectionDB/connection";
 import { Category } from "../model/categoryModel";
 import {
   addCatService,
@@ -8,6 +9,7 @@ import {
   getSpecificCatService,
   updateCatService,
 } from "../services/categoryService";
+const categoryRepository = AppDataSource.getRepository(Category);
 
 export const getCatControl = async (
   request: FastifyRequest,
@@ -18,22 +20,22 @@ export const getCatControl = async (
 };
 
 export const deleteCatControl = async (
-    request: FastifyRequest,
-    reply: FastifyReply
+  request: FastifyRequest,
+  reply: FastifyReply
 ) => {
-    const { id } = request.params as any;
-    if (!id) {
-        reply.send("error removing this category")
+  const { id } = request.params as any;
+  if (!id) {
+    reply.send("error removing this category");
+  } else {
+    const specificCat = await getSpecificCatService({ id });
+    if (!specificCat) {
+      reply.send("invalid id ");
     } else {
-        const specificCat = await getSpecificCatService({ id });
-        if (!specificCat) {
-            reply.send("invalid id ");
-        } else {
-            await deleteCatService({ id });
-            reply.send("category deleted successfully");
-        }
+      await deleteCatService({ id });
+      reply.send("category deleted successfully");
     }
-}  
+  }
+};
 
 export const addCatControl = async (
   request: FastifyRequest,
@@ -54,8 +56,6 @@ export const addCatControl = async (
   const category = new Category();
   if (!name) {
     reply.send("please enter category name");
-  } else if (!parentId) {
-    reply.send("please enter category parent id");
   } else {
     category.name = name;
     category.parentId = parentId;
@@ -102,4 +102,16 @@ export const getSpecificCat = async (
   } else {
     reply.send({ category });
   }
+};
+
+export const getCatTreeById = async (
+  request: FastifyRequest,
+  reply: FastifyReply
+) => {
+  const { id } = (request as any).params;
+  const category = await categoryRepository.find({
+    where: [{ id: id }],
+    relations: { parentCategory: true, subCategories: { subCategories: {subCategories:{subCategories:{subCategories:{subCategories:true}}}} } },
+  });
+  reply.send({ category });
 };

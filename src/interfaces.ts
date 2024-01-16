@@ -9,3 +9,4 @@ export interface ICategoryData {
   name: string;
   parentId: string;
 }
+

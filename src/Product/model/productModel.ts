@@ -1,9 +1,10 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Category } from "../../Category/model/categoryModel";
+import { Timestamp } from "../../common/timestamp";
 
 @Entity("products")
-export class Product {
-  @PrimaryGeneratedColumn({type:"bigint"})
+export class Product extends Timestamp {
+  @PrimaryGeneratedColumn({ type: "bigint" })
   id!: string;
 
   @Column()
@@ -14,13 +15,7 @@ export class Product {
 
   // @ManyToOne((type) => Category)
   // @JoinColumn([{ name: "categoryId", referencedColumnName: "id" }])
-  @Column({type:"bigint"})
+  @Column({ type: "bigint", name: "category_id" })
   categoryId!: string;
-
-  @CreateDateColumn()
-  createdAt!: Date;
-
-  @UpdateDateColumn()
-  updatedAt!: Date;
 }
 
