@@ -3,7 +3,7 @@ import { Column, CreateDateColumn, Entity, PrimaryColumn, PrimaryGeneratedColumn
 @Entity("categories")
 @Unique(["name"])
 export class Category {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn({type:"bigint"})
   id!: string;
 
   @Column({ name: "name" })
@@ -12,8 +12,8 @@ export class Category {
   @Column("mediumblob")
   picture!: Buffer;
 
-  @Column()
-  parentId!: number;
+  @Column({type:"bigint"})
+  parentId!: string;
 
   @CreateDateColumn()
   createdAt!: Date;

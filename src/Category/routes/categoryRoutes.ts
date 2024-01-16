@@ -10,14 +10,17 @@ import {
 
 const app = fastify({ logger: true });
 app.register(fastifyMulter.contentParser);
+
 const storage = fastifyMulter.memoryStorage();
-const upload = fastifyMulter({ storage });
+const upload = fastifyMulter({
+  storage,
+});
 
 export const categoryRoutes = async (fastify: FastifyInstance) => {
-    fastify.get("/categories", getCatControl);
-    fastify.get("/categories/:id",getSpecificCat)
+  fastify.get("/categories", getCatControl);
+  fastify.get("/categories/:id", getSpecificCat);
   fastify.put("/categories/:id", updateCatControl);
-  fastify.delete("/categories/:id", deleteCatControl);
+    fastify.delete("/categories/:id", deleteCatControl);
   fastify.route({
     method: "POST",
     url: "/categories/addCategory",

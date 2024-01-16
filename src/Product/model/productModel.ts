@@ -3,7 +3,7 @@ import { Category } from "../../Category/model/categoryModel";
 
 @Entity("products")
 export class Product {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn({type:"bigint"})
   id!: string;
 
   @Column()
@@ -12,9 +12,10 @@ export class Product {
   @Column("mediumblob")
   picture!: Buffer;
 
-  @ManyToOne((type) => Category)
-  @JoinColumn([{ name: "categoryId", referencedColumnName: "id" }])
-  categoryId!: number;
+  // @ManyToOne((type) => Category)
+  // @JoinColumn([{ name: "categoryId", referencedColumnName: "id" }])
+  @Column({type:"bigint"})
+  categoryId!: string;
 
   @CreateDateColumn()
   createdAt!: Date;
@@ -22,3 +23,4 @@ export class Product {
   @UpdateDateColumn()
   updatedAt!: Date;
 }
+

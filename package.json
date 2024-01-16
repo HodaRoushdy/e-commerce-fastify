@@ -7,7 +7,14 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "start": "node ./dist/index.js",
-    "dev": "nodemon src/index.ts"
+    "dev": "nodemon src/index.ts",
+    "typeorm":"typeorm-ts-node-commonjs",
+    "migration:run":"ts-node ./node_modules/typeorm/cli.js migration:run -d ./src/connectionDB/connection.ts",
+    "migration:revert":"ts-node ./node_modules/typeorm/cli.js migration:revert -d ./src/connectionDB/connection.ts",
+    "schema:sync":"npm run typeorm schema:sync -- -d ./src/connectionDB/connection.ts",
+    "migration:show":"npm run typeorm migration:show -- -d ./src/connectionDB/connection.ts",
+    "migration:generate":"npm run typeorm migration:generate -- -d ./src/connectionDB/connection.ts",
+    "migration:create":"npm run typeorm migration:create"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +27,7 @@
     "fastify-multer": "^2.0.3",
     "mysql2": "^3.7.0",
     "reflect-metadata": "^0.2.1",
+    "sharp": "^0.33.2",
     "typeorm": "^0.3.19",
     "typescript": "^5.3.3",
     "uuid": "^9.0.1"

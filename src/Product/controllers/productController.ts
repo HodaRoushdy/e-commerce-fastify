@@ -1,53 +1,70 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { AppDataSource } from "../../connectionDB/connection";
-import { IproductData } from "../../interfaces";
-import { Product } from "../model/productModel";
+import sharp from "sharp";
+import { Product } from "./../../Product/model/productModel";
+
 import {
+  getProductService,
   addProductService,
   deleteProductService,
-  getProductsService,
+  updateProductService,
+  getSpecificProductService,
 } from "../services/productService";
 
-import { IForId } from "./../../interfaces";
-const productRepository = AppDataSource.getRepository(Product);
-
-export const getProductsControl = async () => {
-  const products = await getProductsService();
-  return { products: products };
-};
-
-export const addProductControl = async (
+export const getProductsControl = async (
   request: FastifyRequest,
   reply: FastifyReply
 ) => {
-  const { name, categoryId } = request.body as IproductData;
-  const file = (request as any).file;
-  console.log(file.buffer);
-  if (name && categoryId) {
-    const productData = new Product();
-    productData.picture = file.buffer;
-    productData.name = name;
-    productData.categoryId = categoryId;
-    await addProductService(productData);
-
-    reply.send({ productData });
-  } else if (!name) {
-    reply.send("enter the name of product please");
-  } else {
-    reply.send("enter category id please");
-  }
+  const allProducts = await getProductService();
+  reply.send({ allProducts });
 };
 
 export const deleteProductControl = async (
   request: FastifyRequest,
   reply: FastifyReply
 ) => {
-  const { id } = request.params as IForId;
-  if (id) {
-    await deleteProductService({ id });
-    reply.send("deleted successfully");
+  const { id } = request.params as any;
+  if (!id) {
+    reply.send("error removing this product");
   } else {
-    reply.send("invalid product");
+    const specificProduct = await getSpecificProductService({ id });
+    if (!specificProduct) {
+      reply.send("invalid id ");
+    } else {
+      await deleteProductService({ id });
+      reply.send("product deleted successfully");
+    }
+  }
+};
+
+export const addProductControl = async (
+  request: FastifyRequest,
+  reply: FastifyReply
+) => {
+  const { name, categoryId } = request.body as any;
+  const file = (request as any).file;
+  const pic = file.buffer;
+  const resized = async () => {
+    const resizedImg = await sharp(pic)
+      .resize({
+        width: 3200,
+        height: 3200,
+      })
+      .toBuffer();
+    return resizedImg;
+  };
+  resized()
+  const product = new Product();
+  if (!name) {
+    reply.send("please enter product name");
+  } else if (!categoryId) {
+    reply.send("please enter product category id");
+  } else {
+    product.name = name;
+    product.categoryId = categoryId;
+    // product.picture = pic;
+    product.picture = await resized();
+    await addProductService(product);
+    reply.send({ "new product added successfully ": product });
   }
 };
 
@@ -55,12 +72,37 @@ export const updateProductControl = async (
   request: FastifyRequest,
   reply: FastifyReply
 ) => {
-  const { id } = request.params as IForId;
-  const { name, categoryId } = request.body as IproductData;
-  if (id && name && categoryId) {
-    const product = new Product();
-    product.name = name;
-    product.categoryId = categoryId;
-    await productRepository.save(product);
+  const { id } = request.params as any;
+  const { name, categoryId } = request.body as any;
+  const file = (request as any).file;
+  if (!name) {
+    reply.send("please enter the category name");
+  } else if (!categoryId) {
+    reply.send("please enter the category parent id");
+  } else {
+    const specificProduct = await getSpecificProductService({ id });
+    if (!specificProduct) {
+      reply.send("invalid id");
+    } else {
+      specificProduct.name = name;
+      specificProduct.categoryId = categoryId;
+      specificProduct.picture = file.buffer;
+      await updateProductService(specificProduct);
+      reply.send({ "product updated successfully": specificProduct });
+    }
   }
 };
+
+export const getSpecificProduct = async (
+  request: FastifyRequest,
+  reply: FastifyReply
+) => {
+  const { id } = (request as any).params;
+  const product = await getSpecificProductService({ id });
+  if (!product) {
+    reply.send("invalid id ");
+  } else {
+    reply.send({ product });
+  }
+};
+
